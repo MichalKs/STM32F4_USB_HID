@@ -1,10 +1,10 @@
 /**
   ******************************************************************************
-  * @file    usbd_conf.h
+  * @file    usbd_hid_core.h
   * @author  MCD Application Team
   * @version V1.1.0
   * @date    19-March-2012
-  * @brief   USB Device configuration file
+  * @brief   header file for the usbd_hid_core.c file.
   ******************************************************************************
   * @attention
   *
@@ -23,79 +23,94 @@
   * limitations under the License.
   *
   ******************************************************************************
-  */
-
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __USBD_CONF__H__
-#define __USBD_CONF__H__
+  */ 
 
 /* Includes ------------------------------------------------------------------*/
-#include "usb_conf.h"
 
-/** @defgroup USB_CONF_Exported_Defines
+#ifndef __USB_HID_CORE_H_
+#define __USB_HID_CORE_H_
+
+#include  "usbd_ioreq.h"
+
+/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
+  * @{
+  */
+  
+/** @defgroup USBD_HID
+  * @brief This file is the Header file for USBD_msc.c
   * @{
   */ 
 
 
-#define USBD_CFG_MAX_NUM           1
-#define USBD_ITF_MAX_NUM           1
-
-#define USB_MAX_STR_DESC_SIZ       64 
-
-#define USBD_SELF_POWERED               
-
-
-
-#define USBD_DYNAMIC_DESCRIPTOR_CHANGE_ENABLED 
-
-/** @defgroup USB_String_Descriptors
+/** @defgroup USBD_HID_Exported_Defines
   * @{
   */ 
+#define USB_HID_CONFIG_DESC_SIZ       34
+#define USB_HID_DESC_SIZ              9
+#define HID_MOUSE_REPORT_DESC_SIZE    74
+
+#define HID_DESCRIPTOR_TYPE           0x21
+#define HID_REPORT_DESC               0x22
 
 
-/** @defgroup USB_HID_Class_Layer_Parameter
-  * @{
-  */ 
-#define HID_IN_EP                    0x81
-#define HID_OUT_EP                   0x01
+#define HID_REQ_SET_PROTOCOL          0x0B
+#define HID_REQ_GET_PROTOCOL          0x03
 
-#define HID_IN_PACKET                4
-#define HID_OUT_PACKET               4
+#define HID_REQ_SET_IDLE              0x0A
+#define HID_REQ_GET_IDLE              0x02
 
-/**
-  * @}
-  */ 
-/** @defgroup USB_CONF_Exported_Types
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USB_CONF_Exported_Macros
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-/** @defgroup USB_CONF_Exported_Variables
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-/** @defgroup USB_CONF_Exported_FunctionsPrototype
-  * @{
-  */ 
+#define HID_REQ_SET_REPORT            0x09
+#define HID_REQ_GET_REPORT            0x01
 /**
   * @}
   */ 
 
 
-#endif //__USBD_CONF__H__
+/** @defgroup USBD_CORE_Exported_TypesDefinitions
+  * @{
+  */
 
+
+/**
+  * @}
+  */ 
+
+
+
+/** @defgroup USBD_CORE_Exported_Macros
+  * @{
+  */ 
+
+/**
+  * @}
+  */ 
+
+/** @defgroup USBD_CORE_Exported_Variables
+  * @{
+  */ 
+
+extern USBD_Class_cb_TypeDef  USBD_HID_cb;
+/**
+  * @}
+  */ 
+
+/** @defgroup USB_CORE_Exported_Functions
+  * @{
+  */ 
+uint8_t USBD_HID_SendReport (USB_OTG_CORE_HANDLE  *pdev, 
+                                 uint8_t *report,
+                                 uint16_t len);
+/**
+  * @}
+  */ 
+
+#endif  // __USB_HID_CORE_H_
+/**
+  * @}
+  */ 
+
+/**
+  * @}
+  */ 
+  
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-

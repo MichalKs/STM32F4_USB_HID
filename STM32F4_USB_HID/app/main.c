@@ -25,15 +25,16 @@
 #include <keys.h>
 
 // USB includes
-#include "usbd_cdc_core.h"
-#include "usbd_usr.h"
-#include "usb_conf.h"
-#include "usbd_desc.h"
+#include <usbd_usr.h>
+#include <usb_conf.h>
+#include <usbd_desc.h>
+#include <usbd_hid_core.h>
 
 #define SYSTICK_FREQ 1000 ///< Frequency of the SysTick set at 1kHz.
 #define COMM_BAUD_RATE 115200UL ///< Baud rate for communication with PC
 
 void softTimerCallback(void);
+void usbSoftTimerCallback(void);
 
 #define DEBUG
 
@@ -53,8 +54,6 @@ __ALIGN_BEGIN USB_OTG_CORE_HANDLE USB_OTG_dev __ALIGN_END; ///< USB device handl
  */
 int main(void) {
 	
-//  __WFI();
-
   COMM_Init(COMM_BAUD_RATE); // initialize communication with PC
   println("Starting program"); // Print a string to terminal
 
@@ -63,6 +62,9 @@ int main(void) {
 	// Add a soft timer with callback running every 1000ms
 	int8_t timerID = TIMER_AddSoftTimer(1000, softTimerCallback);
 	TIMER_StartSoftTimer(timerID); // start the timer
+
+	int8_t usbTimerID = TIMER_AddSoftTimer(20, usbSoftTimerCallback);
+	TIMER_StartSoftTimer(usbTimerID);
 
 	LED_Init(LED0); // Add an LED
 	LED_Init(LED1); // Add an LED
@@ -79,13 +81,11 @@ int main(void) {
   // test another way of measuring time delays
   uint32_t softTimer = TIMER_GetTime(); // get start time for delay
 
-  USB_COMM_Init(); // initialize buffers for USB COM port
-
   // Initialize USB device stack
   USBD_Init(&USB_OTG_dev,
             USB_OTG_FS_CORE_ID,
             &USR_desc, // USB descriptors
-            &USBD_CDC_cb, // class callbacks
+            &USBD_HID_cb, // class callbacks
             &USR_cb); // user callbacks
 
 	while (1) {
@@ -109,33 +109,62 @@ int main(void) {
 	    }
 	  }
 
-    if (!USB_COMM_GetFrame(buf, &len)) {
-      println("Got frame of length %d: %s", (int)len, (char*)buf);
-
-      // control LED0 from terminal
-
-//      if(!strcmp((char*)buf, "ATE1 E0")) {
-//        println("Got AT command");
-//        USB_COMM_Puts("OK\r\n");
-//      }
-
-      // AT commands
-      if (buf[0] == 'A' && buf[1] == 'T') {
-        println("Got AT command");
-        USB_COMM_Puts("OK\r\n");
-      }
-
-      if (!strcmp((char*)buf, ":LED0 ON")) {
-        LED_ChangeState(LED0, LED_ON);
-      }
-      if (!strcmp((char*)buf, ":LED0 OFF")) {
-        LED_ChangeState(LED0, LED_OFF);
-      }
-    }
-
 		TIMER_SoftTimersUpdate(); // run timers
 //		KEYS_Update(); // run keyboard
 	}
+}
+
+/**
+ *
+ * @return
+ */
+uint8_t *USBD_HID_GetPos (void)
+{
+//  int8_t  x = 0 , y = 0 ;
+  static uint8_t HID_Buffer [4];
+
+//  switch (IOE_JoyStickGetState())
+//  {
+//  case JOY_LEFT:
+//    x -= CURSOR_STEP;
+//    break;
+//
+//  case JOY_RIGHT:
+//    x += CURSOR_STEP;
+//    break;
+//
+//  case JOY_UP:
+//    y -= CURSOR_STEP;
+//    break;
+//
+//  case JOY_DOWN:
+//    y += CURSOR_STEP;
+//    break;
+//  }
+
+  HID_Buffer[0] = 0;
+  HID_Buffer[1] = -10;
+  HID_Buffer[2] = -10;
+  HID_Buffer[3] = 0;
+
+  return HID_Buffer;
+}
+
+/**
+ * @brief Callback for periodic handling of
+ * USB stuff.
+ */
+void usbSoftTimerCallback(void) {
+
+  uint8_t* buf;
+
+  buf = USBD_HID_GetPos();
+  if((buf[1] != 0) ||(buf[2] != 0))
+  {
+    USBD_HID_SendReport (&USB_OTG_dev,
+                         buf,
+                         4);
+  }
 }
 
 /**
@@ -163,10 +192,6 @@ void softTimerCallback(void) {
     break;
 
   }
-
-  // print a string to USB COM port
-  char* str = "Test string sent from STM32F4!!!\r\n";
-  USB_COMM_Puts(str, strlen(str));
 
   println("Test string sent from STM32F4!!!"); // Print test string
 	counter++;
