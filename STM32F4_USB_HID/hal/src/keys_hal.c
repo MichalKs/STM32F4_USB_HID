@@ -18,7 +18,10 @@
 #include <keys_hal.h>
 #include <stm32f4xx.h>
 
-
+/**
+ * @addtogroup KEYS_HAL
+ * @{
+ */
 /*
  * Pin and port mappings for matrix keyboard.
  */
@@ -119,3 +122,6 @@ int8_t KEYS_HAL_ReadRow(void) {
 
   return -1;
 }
+/**
+ * @}
+ */

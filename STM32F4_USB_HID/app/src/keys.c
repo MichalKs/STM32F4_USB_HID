@@ -1,8 +1,8 @@
 /**
- * @file: 	keys.c
- * @brief:	   
- * @date: 	5 maj 2014
- * @author: Michal Ksiezopolski
+ * @file    keys.c
+ * @brief   Matrix keyboard library
+ * @date    5 maj 2014
+ * @author  Michal Ksiezopolski
  * 
  * @verbatim
  * Copyright (c) 2014 Michal Ksiezopolski.
@@ -32,34 +32,39 @@
   #define println(str, args...) (void)0
 #endif
 
+/**
+ * @addtogroup KEYS
+ * @{
+ */
+
 #define DEBOUNCE_TIME 200 ///< Key debounce time in ms
-#define REPEAT_TIME 20 ///< Key repeat time
+#define REPEAT_TIME   20  ///< Key repeat time (after this time repeat goes inactive)
 
 /**
- * Key structure typedef.
+ * @brief Key structure typedef.
  */
 typedef struct {
-	uint8_t id;		///< KEY_ID
-	void (*PressCallback)(void);
-	void (*RepeatCallback)(void);
-	uint16_t len;	///<
-	uint16_t count;	///<
+  uint8_t id;  ///< KEY_ID
+  void (*PressCallback)(void);
+  void (*RepeatCallback)(void);
+  uint16_t len;  ///<
+  uint16_t count;  ///<
 } KEY_TypeDef;
 
-
-
 uint8_t currentColumn; ///< Selected keyboard column
-
+/**
+ * @brief Initialize matrix keyboard
+ */
 void KEYS_Init(void) {
 
   KEYS_HAL_Init();
+  // first column
   currentColumn = 0;
 
   // select first column as default
   KEYS_HAL_SelectColumn(0);
 
 }
-
 /**
  * @brief Checks if any keys are set.
  * @details Run this function in main loop to check for pressed keys.
@@ -67,13 +72,12 @@ void KEYS_Init(void) {
  */
 uint8_t KEYS_Update(void) {
 
-  static uint8_t keyId = KEY_NONE; // stores the pressed button ID
-  static uint8_t lastKey = KEY_NONE; // stores last key press for hold
-  uint8_t keyValid = KEY_NONE; // hold a valid debounced key ID
-  uint8_t currentKey = KEY_NONE; // stores temporary key received from HAL (may be glitch)
+  static uint8_t keyId    = KEY_NONE; // stores the pressed button ID
+  static uint8_t lastKey  = KEY_NONE; // stores last key press for hold
+  uint8_t keyValid        = KEY_NONE; // hold a valid debounced key ID
+  uint8_t currentKey      = KEY_NONE; // stores temporary key received from HAL (may be glitch)
 
-  static uint8_t repeatFlag = 0; // reapeat flag
-
+  static uint8_t repeatFlag = 0; // repeat flag
   static uint32_t debounceTimer = 0; // timer for counting debounce time
   static uint32_t repeatTimer = 0;
 
@@ -127,5 +131,6 @@ uint8_t KEYS_Update(void) {
   // if key is valid return ID, if not returns KEY_NONE
   return keyValid;
 }
-
-
+/**
+ * @}
+ */

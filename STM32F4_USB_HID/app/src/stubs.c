@@ -21,6 +21,16 @@
 
 #include <comm.h>
 
+/**
+ * @defgroup  STUBS STUBS
+ * @brief     Newlib stubs
+ */
+
+/**
+ * @addtogroup STUBS
+ * @{
+ */
+
 /*
  * These stubs should be expanded!!!
  * TODO Check params and implement minimal
@@ -71,3 +81,7 @@ int _write(int fileHandle, char *buf, int len) {
 
 	return len;
 }
+
+/**
+ * @}
+ */

@@ -1,7 +1,7 @@
 /**
- * @file: 	keys.h
- * @brief:	   
- * @date: 	5 maj 2014
+ * @file:   keys.h
+ * @brief:  Matrix keyboard library
+ * @date    5 maj 2014
  * @author: Michal Ksiezopolski
  * 
  * @verbatim
@@ -20,6 +20,15 @@
 
 #include <inttypes.h>
 
+/**
+ * @defgroup  KEYS KEYS
+ * @brief     Matrix keyboard library
+ */
+
+/**
+ * @addtogroup KEYS
+ * @{
+ */
 typedef enum {
   KEY0 = 0x31,
   KEY1 = 0x00,
@@ -42,5 +51,7 @@ typedef enum {
 
 void KEYS_Init(void);
 uint8_t KEYS_Update(void);
+
+
 
 #endif /* KEYS_H_ */

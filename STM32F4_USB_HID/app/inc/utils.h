@@ -1,8 +1,8 @@
 /**
- * @file: 	utils.h
- * @brief:	Common macros and functions
- * @date: 	20 lip 2014
- * @author: Michal Ksiezopolski
+ * @file    utils.h
+ * @brief   Utility and help functions.
+ * @date    20 lip 2014
+ * @author  Michal Ksiezopolski
  * 
  * @verbatim
  * Copyright (c) 2014 Michal Ksiezopolski.
@@ -30,7 +30,9 @@
  * @{
  */
 
-void hexdump(uint8_t* buf, uint32_t length);
+void hexdump(const uint8_t* buf, uint32_t length);
+void hexdumpC(const uint8_t const *buf, uint32_t length);
+void hexdump16C(const uint16_t const *buf, uint32_t length);
 
 /**
  * @}

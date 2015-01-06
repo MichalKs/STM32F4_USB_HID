@@ -1,8 +1,8 @@
 /**
- * @file:   timers.c
- * @brief:  Timing control functions.
- * @date:   9 kwi 2014
- * @author: Michal Ksiezopolski
+ * @file    timers.c
+ * @brief   Timing control functions.
+ * @date    9 kwi 2014
+ * @author  Michal Ksiezopolski
  * 
  *
  * Control of the SysTick and software timers

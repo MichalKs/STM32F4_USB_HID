@@ -33,8 +33,9 @@
 #include "usbd_core.h"
 #include "usbd_hid_core.h"
 #include "usb_conf.h"
+#include <usb_dcd_int.h>
 
-extern USB_OTG_CORE_HANDLE           USB_OTG_dev;
+extern USB_OTG_CORE_HANDLE USB_OTG_dev;
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
 * @{
@@ -145,7 +146,7 @@ void USB_OTG_BSP_Init(USB_OTG_CORE_HANDLE *pdev) {
   RCC_APB1PeriphResetCmd(RCC_APB1Periph_PWR, ENABLE);   
   
 
-  // enable pushbutton PA0
+  // Enable pushbutton PA0 for wakeup
   /* Enable the BUTTON Clock */
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
@@ -208,30 +209,12 @@ void USB_OTG_BSP_EnableInterrupt(USB_OTG_CORE_HANDLE *pdev) {
   NVIC_InitTypeDef NVIC_InitStructure; 
   
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-#ifdef USE_USB_OTG_HS   
-  NVIC_InitStructure.NVIC_IRQChannel = OTG_HS_IRQn;
-#else
   NVIC_InitStructure.NVIC_IRQChannel = OTG_FS_IRQn;  
-#endif
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);  
-#ifdef USB_OTG_HS_DEDICATED_EP1_ENABLED
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-  NVIC_InitStructure.NVIC_IRQChannel = OTG_HS_EP1_OUT_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);  
   
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-  NVIC_InitStructure.NVIC_IRQChannel = OTG_HS_EP1_IN_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);   
-#endif
 }
 /**
 * @brief  USB_OTG_BSP_uDelay
@@ -239,8 +222,7 @@ void USB_OTG_BSP_EnableInterrupt(USB_OTG_CORE_HANDLE *pdev) {
 * @param  usec : Value of delay required in micro sec
 * @retval None
 */
-void USB_OTG_BSP_uDelay (const uint32_t usec)
-{
+void USB_OTG_BSP_uDelay (const uint32_t usec) {
   uint32_t count = 0;
   const uint32_t utime = (120 * usec / 7);
   do
@@ -252,22 +234,18 @@ void USB_OTG_BSP_uDelay (const uint32_t usec)
   }
   while (1);
 }
-
-
 /**
 * @brief  USB_OTG_BSP_mDelay
 *          This function provides delay time in milli sec
 * @param  msec : Value of delay required in milli sec
 * @retval None
 */
-void USB_OTG_BSP_mDelay (const uint32_t msec)
-{
+void USB_OTG_BSP_mDelay (const uint32_t msec) {
   USB_OTG_BSP_uDelay(msec * 1000);   
 }
 
-
 /**
-* @brief  This function handles EXTI15_10_IRQ Handler.
+* @brief  This function handles EXTI18_IRQ Handler.
 * @param  None
 * @retval None
 */
@@ -299,7 +277,6 @@ void OTG_FS_WKUP_IRQHandler(void) {
   }
 
   EXTI_ClearITPendingBit(EXTI_Line18);
-  printf("******************In wakeup\r\n");
 }
 
 /**
@@ -311,7 +288,7 @@ void OTG_FS_IRQHandler(void) {
   USBD_OTG_ISR_Handler (&USB_OTG_dev);
 }
 /**
-* @brief  This function handles EXTI15_10_IRQ Handler.
+* @brief  This function handles EXTI0_IRQ Handler.
 * @param  None
 * @retval None
 */
@@ -349,7 +326,6 @@ void EXTI0_IRQHandler(void) {
 
         USB_OTG_UngateClock(&USB_OTG_dev);
       }
-      printf("******************Remote wakeup\r\n");
       USB_OTG_ActiveRemoteWakeup(&USB_OTG_dev);
       USB_OTG_dev.dev.device_status = USB_OTG_dev.dev.device_old_status;
 
@@ -357,7 +333,6 @@ void EXTI0_IRQHandler(void) {
     /* Clear the EXTI line pending bit */
     EXTI_ClearITPendingBit(EXTI_Line0);
 
-    printf("******************EXTI0\r\n");
   }
 }
 

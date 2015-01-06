@@ -20,8 +20,22 @@
 
 #include <inttypes.h>
 
+/**
+ * @defgroup  KEYS_HAL KEYS_HAL
+ * @brief     Matrix keyboard low level functions
+ */
+
+/**
+ * @addtogroup KEYS_HAL
+ * @{
+ */
+
 int8_t KEYS_HAL_ReadRow(void);
 void KEYS_HAL_SelectColumn(uint8_t col);
 void KEYS_HAL_Init(void);
+
+/**
+ * @}
+ */
 
 #endif /* KEYS_HAL_H_ */

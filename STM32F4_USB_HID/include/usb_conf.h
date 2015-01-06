@@ -29,6 +29,7 @@
 #define __USB_CONF__H__
 
 #include "stm32f4xx.h"
+#include <stddef.h>
 
 /** @addtogroup USB_OTG_DRIVER
   * @{
