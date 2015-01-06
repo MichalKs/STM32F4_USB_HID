@@ -125,7 +125,10 @@ int main(void) {
  */
 void getHIDPosition(uint8_t* buf) {
 
-  int8_t x, y;
+  int8_t x = 0, y = 0;
+  uint8_t buttons = 0;
+  static uint32_t buttonTimer;
+  static uint8_t debounce;
 
   switch(key) {
 
@@ -169,13 +172,31 @@ void getHIDPosition(uint8_t* buf) {
     y = HID_STEP;
     break;
 
+  case KEY_ASTERISK:
+//    if (!debounce) {
+//      buttonTimer = TIMER_GetTime();
+//      debounce = 1;
+      buttons |= 0x04; // left mouse button
+//    } else if (TIMER_DelayTimer(200, buttonTimer)) {
+//      debounce = 0;
+//    }
+      x = HID_STEP;
+      y = HID_STEP;
+    break;
+
+  case KEY_HASH:
+    buttons |= 0x01; // right mouse button
+    x = HID_STEP;
+    y = HID_STEP;
+    break;
+
   default:
     x = 0;
     y = 0;
 
   }
 
-  buf[0] = 0;
+  buf[0] = buttons;
   buf[1] = x;
   buf[2] = y;
   buf[3] = 0;
