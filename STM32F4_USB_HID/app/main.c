@@ -114,40 +114,14 @@ int main(void) {
 	}
 }
 
-/**
- *
- * @return
- */
-uint8_t *USBD_HID_GetPos (void)
-{
-//  int8_t  x = 0 , y = 0 ;
-  static uint8_t HID_Buffer [4];
 
-//  switch (IOE_JoyStickGetState())
-//  {
-//  case JOY_LEFT:
-//    x -= CURSOR_STEP;
-//    break;
-//
-//  case JOY_RIGHT:
-//    x += CURSOR_STEP;
-//    break;
-//
-//  case JOY_UP:
-//    y -= CURSOR_STEP;
-//    break;
-//
-//  case JOY_DOWN:
-//    y += CURSOR_STEP;
-//    break;
-//  }
+void getHIDPosition(uint8_t* buf) {
 
-  HID_Buffer[0] = 0;
-  HID_Buffer[1] = -10;
-  HID_Buffer[2] = -10;
-  HID_Buffer[3] = 0;
+  buf[0] = 0;
+  buf[1] = -10; // x
+  buf[2] = -10; // y
+  buf[3] = 0;
 
-  return HID_Buffer;
 }
 
 /**
@@ -156,14 +130,12 @@ uint8_t *USBD_HID_GetPos (void)
  */
 void usbSoftTimerCallback(void) {
 
-  uint8_t* buf;
+  uint8_t buf[4];
 
-  buf = USBD_HID_GetPos();
-  if((buf[1] != 0) ||(buf[2] != 0))
-  {
-    USBD_HID_SendReport (&USB_OTG_dev,
-                         buf,
-                         4);
+  getHIDPosition(buf);
+
+  if((buf[1] != 0) ||(buf[2] != 0)) {
+    USBD_HID_SendReport (&USB_OTG_dev, buf, 4);
   }
 }
 

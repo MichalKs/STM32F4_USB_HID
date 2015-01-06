@@ -25,15 +25,10 @@
   ******************************************************************************
   */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __USB_CONF__H__
 #define __USB_CONF__H__
 
-/* Includes ------------------------------------------------------------------*/
-
 #include "stm32f4xx.h"
-
-
 
 /** @addtogroup USB_OTG_DRIVER
   * @{
@@ -203,27 +198,8 @@
  #endif
 #endif
 
-/****************** C Compilers dependant keywords ****************************/
-/* In HS mode and when the DMA is used, all variables and data structures dealing
-   with the DMA during the transaction process should be 4-bytes aligned */    
-#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
-  #if defined   (__GNUC__)        /* GNU Compiler */
-    #define __ALIGN_END    __attribute__ ((aligned (4)))
-    #define __ALIGN_BEGIN         
-  #else                           
-    #define __ALIGN_END
-    #if defined   (__CC_ARM)      /* ARM Compiler */
-      #define __ALIGN_BEGIN    __align(4)  
-    #elif defined (__ICCARM__)    /* IAR Compiler */
-      #define __ALIGN_BEGIN 
-    #elif defined  (__TASKING__)  /* TASKING Compiler */
-      #define __ALIGN_BEGIN    __align(4) 
-    #endif /* __CC_ARM */  
-  #endif /* __GNUC__ */ 
-#else
-  #define __ALIGN_BEGIN
-  #define __ALIGN_END   
-#endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
+#define __ALIGN_BEGIN
+#define __ALIGN_END
 
 /* __packed keyword used to decrease the data type alignment to 1-byte */
 #ifndef __packed
