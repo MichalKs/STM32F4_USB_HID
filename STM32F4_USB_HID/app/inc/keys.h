@@ -21,18 +21,22 @@
 #include <inttypes.h>
 
 typedef enum {
-  KEY0,
-  KEY1,
-  KEY2,
-  KEY3,
-  KEY4,
-  KEY5,
-  KEY6,
-  KEY7,
-  KEY8,
-  KEY9,
-  KEY_HASH,
-  KEY_ASTERISK,
+  KEY0 = 0x31,
+  KEY1 = 0x00,
+  KEY2 = 0x01,
+  KEY3 = 0x02,
+  KEY4 = 0x10,
+  KEY5 = 0x11,
+  KEY6 = 0x12,
+  KEY7 = 0x20,
+  KEY8 = 0x21,
+  KEY9 = 0x22,
+  KEYA = 0x03,
+  KEYB = 0x13,
+  KEYC = 0x23,
+  KEYD = 0x33,
+  KEY_HASH = 0x32,
+  KEY_ASTERISK = 0x30,
   KEY_NONE = 0xff
 } KEY_Id_Typedef;
 

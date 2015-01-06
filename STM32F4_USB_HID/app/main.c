@@ -48,6 +48,8 @@ void usbSoftTimerCallback(void);
 
 __ALIGN_BEGIN USB_OTG_CORE_HANDLE USB_OTG_dev __ALIGN_END; ///< USB device handle
 
+static uint8_t key;
+
 /**
  * @brief Main function
  * @return None
@@ -73,7 +75,7 @@ int main(void) {
 	LED_Init(LED5); // Add nonexising LED for test
 	LED_ChangeState(LED5, LED_ON);
 
-//	KEYS_Init(); // Initialize matrix keyboard
+	KEYS_Init(); // Initialize matrix keyboard
 
   uint8_t buf[255]; // buffer for receiving commands from PC
   uint8_t len;      // length of command
@@ -110,16 +112,72 @@ int main(void) {
 	  }
 
 		TIMER_SoftTimersUpdate(); // run timers
-//		KEYS_Update(); // run keyboard
+		key = KEYS_Update(); // run keyboard
+
 	}
 }
 
+#define HID_STEP 10 ///< Cursor step for every move
 
+/**
+ * @brief Function return the current move step of HID device
+ * @param buf Buffor to fill data.
+ */
 void getHIDPosition(uint8_t* buf) {
 
+  int8_t x, y;
+
+  switch(key) {
+
+  case KEY1:
+    x = -HID_STEP;
+    y = -HID_STEP;
+    break;
+
+  case KEY2:
+    x = 0;
+    y = -HID_STEP;
+    break;
+
+  case KEY3:
+    x = HID_STEP;
+    y = -HID_STEP;
+    break;
+
+  case KEY4:
+    x = -HID_STEP;
+    y = 0;
+    break;
+
+  case KEY6:
+    x = HID_STEP;
+    y = 0;
+    break;
+
+  case KEY7:
+    x = -HID_STEP;
+    y = HID_STEP;
+    break;
+
+  case KEY8:
+    x = 0;
+    y = HID_STEP;
+    break;
+
+  case KEY9:
+    x = HID_STEP;
+    y = HID_STEP;
+    break;
+
+  default:
+    x = 0;
+    y = 0;
+
+  }
+
   buf[0] = 0;
-  buf[1] = -10; // x
-  buf[2] = -10; // y
+  buf[1] = x;
+  buf[2] = y;
   buf[3] = 0;
 
 }
