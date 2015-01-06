@@ -28,8 +28,14 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usb_bsp.h"
-#include "usbd_conf.h"
 #include <stm32f4xx.h>
+#include "usb_core.h"
+#include "usbd_core.h"
+#include "usbd_hid_core.h"
+#include "usb_conf.h"
+
+extern USB_OTG_CORE_HANDLE           USB_OTG_dev;
+
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
 * @{
 */
@@ -258,6 +264,103 @@ void USB_OTG_BSP_mDelay (const uint32_t msec)
 {
   USB_OTG_BSP_uDelay(msec * 1000);   
 }
+
+
+/**
+* @brief  This function handles EXTI15_10_IRQ Handler.
+* @param  None
+* @retval None
+*/
+void OTG_FS_WKUP_IRQHandler(void) {
+
+  if(USB_OTG_dev.cfg.low_power) {
+    /* Reset SLEEPDEEP and SLEEPONEXIT bits */
+    SCB->SCR &= (uint32_t)~((uint32_t)(SCB_SCR_SLEEPDEEP_Msk | SCB_SCR_SLEEPONEXIT_Msk));
+
+    /* After wake-up from sleep mode, reconfigure the system clock */
+    RCC_HSEConfig(RCC_HSE_ON);
+
+    /* Wait till HSE is ready */
+    while (RCC_GetFlagStatus(RCC_FLAG_HSERDY) == RESET);
+
+    /* Enable PLL */
+    RCC_PLLCmd(ENABLE);
+
+    /* Wait till PLL is ready */
+    while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET);
+
+    /* Select PLL as system clock source */
+    RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
+
+    /* Wait till PLL is used as system clock source */
+    while (RCC_GetSYSCLKSource() != 0x08);
+
+    USB_OTG_UngateClock(&USB_OTG_dev);
+  }
+
+  EXTI_ClearITPendingBit(EXTI_Line18);
+  printf("******************In wakeup\r\n");
+}
+
+/**
+* @brief  This function handles OTG_HS Handler.
+* @param  None
+* @retval None
+*/
+void OTG_FS_IRQHandler(void) {
+  USBD_OTG_ISR_Handler (&USB_OTG_dev);
+}
+/**
+* @brief  This function handles EXTI15_10_IRQ Handler.
+* @param  None
+* @retval None
+*/
+void EXTI0_IRQHandler(void) {
+
+  if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
+
+//    if (USB_OTG_dev.dev.DevRemoteWakeup) {
+
+      if((USB_OTG_dev.cfg.low_power)&&(USB_OTG_dev.dev.device_status==USB_OTG_SUSPENDED)) {
+
+        /* Reset SLEEPDEEP and SLEEPONEXIT bits */
+        SCB->SCR &= (uint32_t)~((uint32_t)(SCB_SCR_SLEEPDEEP_Msk | SCB_SCR_SLEEPONEXIT_Msk));
+
+        /* After wake-up from sleep mode, reconfigure the system clock */
+        /* After wake-up from STOP reconfigure the system clock */
+
+        /* Enable HSE */
+        RCC_HSEConfig(RCC_HSE_ON);
+
+        /* Wait till HSE is ready */
+        while (RCC_GetFlagStatus(RCC_FLAG_HSERDY) == RESET);
+
+        /* Enable PLL */
+        RCC_PLLCmd(ENABLE);
+
+        /* Wait till PLL is ready */
+        while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET);
+
+        /* Select PLL as system clock source */
+        RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
+
+        /* Wait till PLL is used as system clock source */
+        while (RCC_GetSYSCLKSource() != 0x08);
+
+        USB_OTG_UngateClock(&USB_OTG_dev);
+      }
+      printf("******************Remote wakeup\r\n");
+      USB_OTG_ActiveRemoteWakeup(&USB_OTG_dev);
+      USB_OTG_dev.dev.device_status = USB_OTG_dev.dev.device_old_status;
+
+//    }
+    /* Clear the EXTI line pending bit */
+    EXTI_ClearITPendingBit(EXTI_Line0);
+
+    printf("******************EXTI0\r\n");
+  }
+}
+
 /**
 * @}
 */ 

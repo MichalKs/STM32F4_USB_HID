@@ -162,7 +162,7 @@
  #define TX2_FIFO_FS_SIZE                          0
  #define TX3_FIFO_FS_SIZE                          0
 
- #define USB_OTG_FS_LOW_PWR_MGMT_SUPPORT
+// #define USB_OTG_FS_LOW_PWR_MGMT_SUPPORT
 // #define USB_OTG_FS_SOF_OUTPUT_ENABLED
 #endif
 
