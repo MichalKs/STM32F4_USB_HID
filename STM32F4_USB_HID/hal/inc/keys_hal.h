@@ -1,8 +1,8 @@
 /**
- * @file: 	keys_hal.h
- * @brief:	   
- * @date: 	6 paź 2014
- * @author: Michal Ksiezopolski
+ * @file    keys_hal.h
+ * @brief   Matrix keyboard low level functions
+ * @date    6 paź 2014
+ * @author  Michal Ksiezopolski
  * 
  * @verbatim
  * Copyright (c) 2014 Michal Ksiezopolski.

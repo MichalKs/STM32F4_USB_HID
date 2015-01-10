@@ -1,8 +1,8 @@
 /**
- * @file:   keys.h
- * @brief:  Matrix keyboard library
+ * @file    keys.h
+ * @brief   Matrix keyboard library
  * @date    5 maj 2014
- * @author: Michal Ksiezopolski
+ * @author  Michal Ksiezopolski
  * 
  * @verbatim
  * Copyright (c) 2014 Michal Ksiezopolski.
@@ -52,6 +52,8 @@ typedef enum {
 void KEYS_Init(void);
 uint8_t KEYS_Update(void);
 
-
+/**
+ * @}
+ */
 
 #endif /* KEYS_H_ */

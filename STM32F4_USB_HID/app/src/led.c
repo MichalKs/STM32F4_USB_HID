@@ -3,6 +3,7 @@
  * @brief   Light Emitting Diode control functions.
  * @date    9 kwi 2014
  * @author  Michal Ksiezopolski
+ *
  * @details A simple library to add an abstraction
  * layer to blinking LEDs.
  * To use the library you need to call LED_Init using
